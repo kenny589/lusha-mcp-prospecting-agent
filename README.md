@@ -20,10 +20,9 @@ No spreadsheets. No tab switching. No manual enrichment.
 
 ### 1. Get a Lusha API Key
 
-- Create a free Lusha account at [lusha.com](https://www.lusha.com)
+- [Create a free Lusha account and get your API key here](https://partnerstack.lusha.com/Kennydamian)
 - Go to **Settings > API**
 - Generate your production API key
-- [Get a Free API Key](https://www.lusha.com/lp/golden-api-key/)
 
 ### 2. Add the Hosted MCP Server to Claude Code
 
@@ -418,7 +417,7 @@ lusha-mcp-prospecting-agent/
 - [Lusha MCP Docs](https://docs.lusha.com/mcp-docs)
 - [Lusha API Docs](https://docs.lusha.com)
 - [Lusha OpenAPI Spec](https://docs.lusha.com/apis/openapi)
-- [Get a Free API Key](https://www.lusha.com/lp/golden-api-key/)
+- [Get a Free API Key](https://partnerstack.lusha.com/Kennydamian)
 - [Lusha npm MCP Package](https://github.com/lusha-oss/lusha-public-api-mcp) (enrichment-only, 2 tools)
 
 ---
