@@ -466,4 +466,6 @@ lusha-mcp-prospecting-agent/
 
 ---
 
-Built by [Kenny Damian](https://linkedin.com/in/kennydamian) @ [ColdIQ](https://coldiq.com)
+Built by [Kenny Damian](https://www.linkedin.com/in/kenny-damian-90aba221a/) @ [ColdIQ](https://coldiq.com)
+
+[Get a Free Lusha API Key](https://partnerstack.lusha.com/Kennydamian)
