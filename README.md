@@ -1,12 +1,12 @@
-# Lusha MCP Prospecting Agent
+# Claude Code x Lusha: AI Prospecting Agent
 
-Build an AI prospecting agent inside Claude Code using Lusha's hosted MCP server, Prospecting API, and Signals API.
+Build an AI prospecting agent in Claude Code using Lusha's MCP server, Prospecting API, and Signals API.
 
-One prompt. Verified contacts, company data, and live buying signals — returned in minutes.
+Open Claude Code. Describe your ICP. Get verified contacts, company data, and live buying signals — in minutes.
 
-## What This Does
+## What Claude Code Does With Lusha
 
-You describe your ICP in natural language. Claude Code handles the rest:
+You give Claude Code a natural language prompt. It handles the rest:
 
 1. Searches for matching companies and contacts via Lusha's Prospecting API
 2. Layers buying signals (hiring surges, headcount growth, funding, news) from the Signals API
@@ -14,9 +14,9 @@ You describe your ICP in natural language. Claude Code handles the rest:
 4. Ranks every account as HOT / WARM / WATCH
 5. Returns an action-ready prospecting queue
 
-No spreadsheets. No tab switching. No manual enrichment.
+No spreadsheets. No tab switching. No manual enrichment. Just Claude Code + Lusha.
 
-## Setup (5 minutes)
+## Setup in Claude Code (5 minutes)
 
 ### 1. Get a Lusha API Key
 
@@ -56,7 +56,7 @@ Add this to your shell profile (`.zshrc` or `.bashrc`) so it persists.
 
 ### 4. Add the CLAUDE.md System Prompt
 
-Copy the `CLAUDE.md` file from this repo into your project root. This gives Claude Code the full context it needs — API schemas, signal types, filter options, enrichment flow — so it can execute the entire prospecting workflow from a single natural language prompt.
+Copy the `CLAUDE.md` file from this repo into your project root. This gives Claude Code everything it needs — API schemas, signal types, filter options, enrichment flow — so Claude Code can execute the entire prospecting workflow from a single natural language prompt.
 
 ### 5. Verify the Connection
 
@@ -273,9 +273,9 @@ Header: api_key: YOUR_KEY
 
 **Cost:** 1 credit per contact.
 
-## Prompt Templates
+## Prompt Templates for Claude Code
 
-Copy these prompts into Claude Code to run the full prospecting workflow.
+Copy these prompts directly into Claude Code to run the full prospecting workflow.
 
 ### Prompt 1: Search Your ICP
 
