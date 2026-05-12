@@ -3,23 +3,36 @@
 ```
 Rank every account using this system:
 
-HOT = Strong ICP fit + active buying signal in the last 30 days
-WARM = ICP fit, signal is older than 30 days or weak
-WATCH = Partial ICP fit, no signal, worth monitoring
+HOT = Strong ICP fit + at least one buying signal dated within the last 30 days
+WARM = ICP fit + signal older than 30 days, or a weak signal (e.g., small headcount change)
+WATCH = Partial ICP fit, no active signal, worth monitoring
 
-For each account, return:
-- Company name and domain
-- Best contact (name, title, email, phone)
-- Signal type and date
+For each account, return a table with these columns:
+- Company name
+- Domain
+- Contact name
+- Title
+- Verified email
+- Phone number
+- Signal type (e.g., "Hiring Surge", "Headcount +12%", "Series B Funding")
+- Signal date
 - Rank (HOT / WARM / WATCH)
-- One-line outreach angle tied to the signal
+- One-line outreach angle — this MUST reference the specific signal data (e.g., "546 new job postings" not just "hiring surge")
 
-Format as a table. Sort HOT first, then WARM, then WATCH.
+Sort the table: HOT first, then WARM, then WATCH.
+
+At the bottom, add a summary:
+- Count of HOT / WARM / WATCH accounts
+- Total credits used across all API calls
+- Suggested next step for each tier (e.g., "Outreach immediately", "Add to nurture", "Monitor")
+
+Also export the full table as a CSV file I can download.
 ```
 
 ## Customization Tips
 
-- Add "Export as CSV" to get a downloadable file
-- Change the ranking thresholds (e.g., "HOT = signal in last 14 days")
-- Add "Include LinkedIn profile URL for each contact" for social selling
+- Change the ranking thresholds (e.g., "HOT = signal in last 14 days" for more urgency)
 - Add "Write a 3-sentence cold email for each HOT prospect" for immediate outreach
+- Add "Include LinkedIn profile URL" for social selling workflows
+- Add "Group by signal type" to see all hiring surge companies together
+- Add "Score each account 1-100" for more granular prioritization

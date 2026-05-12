@@ -275,12 +275,12 @@ Header: api_key: YOUR_KEY
 
 ## Prompt Templates for Claude Code
 
-Copy these prompts directly into Claude Code to run the full prospecting workflow.
+Copy these prompts directly into Claude Code. Each one tells Claude Code exactly what API to call, what headers to use, and what format to return. See the `prompts/` folder for expanded versions with customization tips.
 
 ### Prompt 1: Search Your ICP
 
 ```
-I'm building a prospect list. Here's my ICP:
+I'm building a prospect list using Lusha. Here's my ICP:
 
 - Target titles: VP Sales, Head of Revenue, CRO
 - Company size: 50 to 500 employees
@@ -288,9 +288,20 @@ I'm building a prospect list. Here's my ICP:
 - Region: United States
 - Exclude: Agencies, consulting firms, companies under $2M ARR
 
-Search Lusha's Prospecting API for companies matching these filters.
-Then search for contacts at those companies with my target titles.
-Return up to 25 results.
+Step 1: Search for companies matching my ICP.
+Use the Lusha Prospecting API: POST https://api.lusha.com/prospecting/company/search
+Use the api_key header for authentication with my LUSHA_API_KEY env variable.
+Set sizes as [{"min": 50, "max": 500}] and locations as [{"country": "United States"}].
+Use searchText for industry keywords if needed. Return 25 results.
+
+Step 2: For each company returned, search for contacts matching my target titles.
+Use: POST https://api.lusha.com/prospecting/contact/search
+Filter by jobTitles: ["VP Sales", "Head of Revenue", "CRO"] and seniority: [7, 8, 9] (Director, VP, C-Suite).
+Pass the company names or domains from Step 1 into the companies filter.
+
+Both searches are FREE — no credits consumed.
+
+Show me the results as a table with: company name, domain, contact name, title, and whether they have email/phone available.
 ```
 
 ### Prompt 2: Layer Buying Signals
@@ -298,57 +309,66 @@ Return up to 25 results.
 ```
 Now check which of these companies have active buying signals.
 
-Pull these signals for every company from the search results:
-- Hiring surges (surgeInHiring)
-- Headcount growth (headcountIncrease1m, headcountIncrease3m)
-- Financial events / funding (financialEventsNews)
-- Product launches (productActivityNews)
-- Leadership changes (peopleNews)
+Use the Lusha Signals API: POST https://api.lusha.com/api/signals/companies
+Use the api_key header for authentication.
 
-Use Lusha's Signals API. Flag every company with at least one active signal.
+Pass the companyIds (integers) from the search results as an array.
+Max 100 company IDs per request.
+
+Pull these specific signals:
+- "surgeInHiring" — unusual spike in job postings
+- "headcountIncrease1m" — employee growth in last month
+- "headcountIncrease3m" — employee growth in last 3 months
+- "financialEventsNews" — funding rounds, IPO, investment
+- "productActivityNews" — product launches, new features
+- "peopleNews" — leadership changes, key hires
+
+This costs credits — tell me how many companies you're checking before running it.
+
+For each company with at least one signal, show me: company name, domain, signal type, signal date, and the key data point.
 ```
 
 ### Prompt 3: Enrich the Decision-Makers
 
 ```
-For each company with an active signal, enrich the best contact.
+For each company with an active buying signal, enrich the best contact.
 
-Priority titles: VP Sales > Head of Revenue > CRO > Director of Sales
+Priority titles (in order): VP Sales > Head of Revenue > CRO > Director of Sales
 
-Use Lusha MCP to pull:
-- Verified work email
-- Direct phone number
-- Current title and seniority
-- LinkedIn profile URL
+Use the Lusha MCP tool "prospecting_contact_enrich" if available.
+Or use the REST endpoint: POST https://api.lusha.com/prospecting/contact/enrich
+With the api_key header for authentication.
 
+You MUST pass the requestId from the contact search response + the contactIds (UUIDs).
+
+This costs 1-6 credits per contact. Tell me how many contacts and estimated credit cost before running it.
+
+For each enriched contact, show me: full name, title, company, verified work email (with confidence score), direct phone, mobile phone, LinkedIn URL.
 Skip any contact without a verified email.
 ```
 
 ### Prompt 4: Rank and Output
 
 ```
-Rank every account using this system:
+Rank every account:
 
-HOT = Strong ICP fit + active buying signal in the last 30 days
-WARM = ICP fit, signal is older than 30 days or weak
-WATCH = Partial ICP fit, no signal, worth monitoring
+HOT = ICP fit + at least one buying signal in the last 30 days
+WARM = ICP fit + signal older than 30 days or weak signal
+WATCH = Partial ICP fit, no active signal
 
-For each account, return:
-- Company name and domain
-- Best contact (name, title, email, phone)
-- Signal type and date
-- Rank (HOT / WARM / WATCH)
-- One-line outreach angle tied to the signal
+Return a markdown table with: company, domain, contact name, title, email, phone, signal type, signal date, rank, and a one-line outreach angle that references the specific signal data (e.g., "546 new job postings" not just "hiring surge").
 
-Format as a table. Sort HOT first, then WARM, then WATCH.
+Sort HOT first, then WARM, then WATCH.
+Show a summary: count per tier, total credits used, suggested next step per tier.
+Export as CSV.
 ```
 
-### Single-Prompt Version
+### Single-Prompt Version (All-in-One)
 
-You can also run the entire workflow in one shot:
+Run the entire workflow in one shot — paste this into Claude Code:
 
 ```
-Build me a prospecting list using Lusha.
+Build me a prospecting list using Lusha's APIs. My LUSHA_API_KEY is set as an environment variable.
 
 ICP:
 - Titles: VP Sales, Head of Revenue, CRO, Director of Sales
@@ -356,13 +376,37 @@ ICP:
 - Industry: B2B SaaS
 - Region: United States
 
-For each company:
-1. Search for matching companies via Lusha's Prospecting API
-2. Check for buying signals (hiring surges, headcount growth, funding, product launches)
-3. Find the best contact at each company and enrich with verified email + phone
-4. Rank as HOT (signal in last 30 days), WARM (older signal), or WATCH (no signal)
+Run these steps in order:
 
-Return a ranked table with: company, domain, contact name, title, email, phone, signal, rank, and a one-line outreach angle.
+1. SEARCH COMPANIES (free — no credits)
+   POST https://api.lusha.com/prospecting/company/search
+   Header: api_key from my LUSHA_API_KEY env variable
+   Use sizes as [{"min": 50, "max": 500}], locations as [{"country": "United States"}].
+   Use searchText for industry keywords. Return 25 results.
+
+2. SEARCH CONTACTS at those companies (free — no credits)
+   POST https://api.lusha.com/prospecting/contact/search
+   Filter by jobTitles: ["VP Sales", "Head of Revenue", "CRO", "Director of Sales"]
+   Filter by seniority: [7, 8, 9] (Director, VP, C-Suite)
+   Pass company names from Step 1 into the companies filter.
+
+3. CHECK BUYING SIGNALS (costs credits — tell me before running)
+   POST https://api.lusha.com/api/signals/companies
+   Pass companyIds (integers) from search results.
+   Check signals: ["surgeInHiring", "headcountIncrease1m", "headcountIncrease3m", "financialEventsNews", "productActivityNews", "peopleNews"]
+
+4. ENRICH TOP CONTACTS (costs credits — tell me before running)
+   POST https://api.lusha.com/prospecting/contact/enrich
+   Pass the requestId from the contact search response + contactIds of best contacts.
+   Only enrich contacts at companies with active signals.
+
+5. RANK AND OUTPUT
+   HOT = ICP fit + signal in last 30 days
+   WARM = ICP fit + older/weak signal
+   WATCH = partial fit, no signal
+
+   Return a markdown table: company, domain, contact name, title, email, phone, signal type, signal date, rank, one-line outreach angle (must reference specific signal data).
+   Export as CSV. Show total credits used.
 ```
 
 ## Ranking System
